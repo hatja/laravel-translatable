@@ -1,13 +1,11 @@
 {
-    "name": "dimsav/laravel-translatable",
+    "name": "beyaty/laravel-translatable",
     "description": "A Laravel package for multilingual models",
     "keywords": ["laravel", "translation", "language", "database"],
     "license": "MIT",
     "authors": [
         {
-            "name": "Dimitrios Savvopoulos",
-            "email": "ds@dimsav.com",
-            "homepage": "http://dimsav.com"
+            "name": "Beyaty David"
         }
     ],
     "require": {
@@ -20,7 +18,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Dimsav\\Translatable\\": "src/Translatable/"
+            "Beyaty\\Translatable\\": "src/Translatable/"
         },
         "classmap": [
             "tests"
