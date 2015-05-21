@@ -306,35 +306,39 @@ trait Translatable
      * @param Builder $query
      * @param string  $translationField
      */
-    public function scopeListsTranslations(Builder $query, $translationFields, $originalFields)
+    public function scopeListsTranslations(Builder $query, $translationFields, $originalFields = null)
     {
-        $withFallback = $this->useFallback();
+        if ($originalFields === null) {
+            $this->scopeListsTranslations($query, [$translationFields], [$this->getKeyName()]);
+        } else {
+            $withFallback = $this->useFallback();
 
-        $originalSelects = array_map(function($field) {
-            return $this->getTable().'.'.$field;
-        }, $originalFields);
+            $originalSelects = array_map(function($field) {
+                return $this->getTable().'.'.$field;
+            }, $originalFields);
 
-        $translationsSelects = array_map(function($field) {
-            return $this->getTranslationsTable().'.'.$field;
-        }, $translationFields);
+            $translationsSelects = array_map(function($field) {
+                return $this->getTranslationsTable().'.'.$field;
+            }, $translationFields);
 
-        $query
-            ->select(array_merge($originalSelects, $translationsSelects))
-            ->leftJoin($this->getTranslationsTable(), $this->getTranslationsTable().'.'.$this->getRelationKey(), '=', $this->getTable().'.'.$this->getKeyName())
-            ->where(function($where) use ($withFallback) {
-                $where->where($this->getTranslationsTable().'.'.$this->getLocaleKey(), App::getLocale());
+            $query
+                ->select(array_merge($originalSelects, $translationsSelects))
+                ->leftJoin($this->getTranslationsTable(), $this->getTranslationsTable().'.'.$this->getRelationKey(), '=', $this->getTable().'.'.$this->getKeyName())
+                ->where(function($where) use ($withFallback) {
+                    $where->where($this->getTranslationsTable().'.'.$this->getLocaleKey(), App::getLocale());
 
-                if ($withFallback) {
-                    $where->orWhere(function (Builder $q) {
-                        $q->where($this->getTranslationsTable().'.'.$this->getLocaleKey(), $this->getFallbackLocale())
-                            ->whereNotIn($this->getTranslationsTable().'.'.$this->getRelationKey(), function (QueryBuilder $q) {
-                                $q->select($this->getTranslationsTable().'.'.$this->getRelationKey())
-                                    ->from($this->getTranslationsTable())
-                                    ->where($this->getTranslationsTable().'.'.$this->getLocaleKey(), App::getLocale());
-                            });
-                    });
-                }
-            });
+                    if ($withFallback) {
+                        $where->orWhere(function (Builder $q) {
+                            $q->where($this->getTranslationsTable().'.'.$this->getLocaleKey(), $this->getFallbackLocale())
+                                ->whereNotIn($this->getTranslationsTable().'.'.$this->getRelationKey(), function (QueryBuilder $q) {
+                                    $q->select($this->getTranslationsTable().'.'.$this->getRelationKey())
+                                        ->from($this->getTranslationsTable())
+                                        ->where($this->getTranslationsTable().'.'.$this->getLocaleKey(), App::getLocale());
+                                });
+                        });
+                    }
+                });
+        }
     }
 
     public function toArray()
