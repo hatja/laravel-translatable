@@ -1,4 +1,4 @@
-<?php namespace Dimsav\Translatable;
+<?php namespace Beyaty\Translatable;
 
 use Illuminate\Support\ServiceProvider;
 

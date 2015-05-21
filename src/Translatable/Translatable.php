@@ -1,7 +1,7 @@
-<?php namespace Dimsav\Translatable;
+<?php namespace Beyaty\Translatable;
 
 use App;
-use Dimsav\Translatable\Exception\LocalesNotDefinedException;
+use Beyaty\Translatable\Exception\LocalesNotDefinedException;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Database\Eloquent\MassAssignmentException;
