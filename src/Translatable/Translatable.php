@@ -306,12 +306,20 @@ trait Translatable
      * @param Builder $query
      * @param string  $translationField
      */
-    public function scopeListsTranslations(Builder $query, $translationField)
+    public function scopeListsTranslations(Builder $query, $translationFields, $originalFields)
     {
         $withFallback = $this->useFallback();
 
+        $originalSelects = array_map(function($field) {
+            return $this->getTable().'.'$field;
+        }, $originalFields);
+
+        $translationsSelects = array_map(function($field) {
+            return $this->getTranslationsTable().'.'$field;
+        }, $translationFields);
+
         $query
-            ->select($this->getTable().'.'.$this->getKeyName(), $this->getTranslationsTable().'.'.$translationField)
+            ->select(array_merge($originalSelects, $transtationsSelects))
             ->leftJoin($this->getTranslationsTable(), $this->getTranslationsTable().'.'.$this->getRelationKey(), '=', $this->getTable().'.'.$this->getKeyName())
             ->where($this->getTranslationsTable().'.'.$this->getLocaleKey(), App::getLocale())
         ;
